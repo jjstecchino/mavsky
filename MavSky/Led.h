@@ -14,7 +14,7 @@
 #define LED_H
 
 #include <WProgram.h> 
-#include "OctoWS2811.h" 
+#include "FastLED.h"
 
 #define GROUP_MODE_DISABLED    0
 #define GROUP_MODE_SOLID       1
@@ -25,11 +25,28 @@
 #define GROUP_MODE_BOUNCE      6
 #define GROUP_MODE_FILL        7
 
+// FastLED data pin definition for TinsyBoard and other settings
+#define CHIPSET                     WS2812B
+#define RGB_ORDER                   GRB
+#define FL_DP                       16      // front left 
+#define FR_DP                       19      // back left
+
+
+#define MFL_DP                      20        // middle front left
+#define MFR_DP                      23        // middle back right
+#define MBL_DP                      21        // middle back left
+#define MBR_DP                      22        // middle front right
+
+#define BL_DP                       17       // back right
+#define BR_DP                       18       // front right
+
+
+
 class LedController {
   private:
     uint16_t  pc = 0;
     uint16_t  current_instruction_pc = 0;
-    OctoWS2811* leds;
+    CRGB leds[MAX_LEDS_PER_STRIP*MAX_STRIPS];
     int32_t pausing_time_left = 0; 
     uint32_t get_variable(uint16_t input);
     uint32_t registers[MAX_REGISTERS];

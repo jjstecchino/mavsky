@@ -1,4 +1,4 @@
-//#include <OctoWS2811.h>
+//  MAVSKY-FASTLED converted from octows2811 on 5/28/2016 and working
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
 //
 //  A copy of the GNU General Public License is available at <http://www.gnu.org/licenses/>.
 //    
-//  Creator:  Scott Simpson
+//  Creator:  Scott Simpson Adapted to FastLED: Claudio Guareschi
 //
 //
 //  For Teensy 3.1 support
@@ -26,18 +26,15 @@
 //
 //  Required Connections
 //  --------------------
-//    pin 2:  LED Strip #1    OctoWS2811 drives 8 LED Strips.
-//    pin 14: LED strip #2    All 8 are the same length.
-//    pin 7:  LED strip #3
-//    pin 8:  LED strip #4    A 100 ohm resistor should used
-//    pin 6:  LED strip #5    between each Teensy pin and the
-//    pin 20: LED strip #6    wire to the LED strip, to minimize
-//    pin 21: LED strip #7    high frequency ringining & noise.
-//    pin 5:  LED strip #8
-//    pin 15 & 16 - Connect together, but do not use
-//    pin 4 - Do not use
-//    pin 3 - Do not use as PWM.  Normal use is ok.
-//
+//    pin 16: LED Strip #1 - FL    -- FastLED drived 8 LED Strips of neopixels or other supported .
+//    pin 17: LED strip #2 - BL    -- single data channell LEDs. All strips are the same length.
+//    pin 18  LED strip #3 - BR    
+//    pin 19  LED strip #4 - FR    -- A 100 ohm resistor should used
+//    pin 20  LED strip #5 - MFL   -- between each Teensy pin and the
+//    pin 21: LED strip #6 - MBL   -- wire to the LED strip, to minimize
+//    pin 22: LED strip #7 - MBR   -- high frequency ringining & noise.
+//    pin 23: LED strip #8 - MFR   
+//    
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include <GCS_MAVLink.h>
 #include <EEPROM.h>
@@ -51,7 +48,7 @@
 #include "Led.h"
 
 #define LEDPIN          13
-#define PROBEPIN        12
+//#define PROBEPIN        12
                           
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,8 +59,8 @@ MavLinkData *mav;
 FrSkySPort *frsky;
 DataBroker *data_broker;
 
-DMAMEM int displayMemory[MAX_LEDS_PER_STRIP*6];
-int drawingMemory[MAX_LEDS_PER_STRIP*6];
+//DMAMEM int displayMemory[MAX_LEDS_PER_STRIP*6];
+//int drawingMemory[MAX_LEDS_PER_STRIP*6];
   
 LedController* led_strip_ptr;
 
@@ -77,7 +74,7 @@ void setup()  {
   delay(5000);
 
   pinMode(LEDPIN, OUTPUT);
-  pinMode(PROBEPIN, OUTPUT);
+  //pinMode(PROBEPIN, OUTPUT);
   console->console_print("%s\r\nStarting\r\n]", PRODUCT_STRING);
 
   led_strip_ptr = new LedController();  
@@ -110,13 +107,13 @@ uint8_t leds_changed = 0;
 
 void loop()  {
   uint32_t current_milli = millis();
-  uint8_t state = (current_milli % 10);
+  uint8_t state = (current_milli % 10);             // run led at 100Hz refresh rate. Original OctoWS capable of 100Hz
   switch(state) {
     case 0:
       if(leds_changed == 0) {
-        digitalWrite(PROBEPIN, HIGH);  
+        //digitalWrite(PROBEPIN, HIGH);  
         led_strip_ptr->process_10_millisecond();
-        digitalWrite(PROBEPIN, LOW);  
+        //digitalWrite(PROBEPIN, LOW);  
         leds_changed = 1;
       }
       break;

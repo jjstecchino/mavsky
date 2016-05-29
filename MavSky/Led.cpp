@@ -14,7 +14,7 @@
 //  
 
 #include "MavSky.h"
-#include "OctoWS2811.h"
+#include "FastLED.h"
 #include "LedGroup.h"
 #include "LedGroupAction.h"
 #include "Led.h"
@@ -25,8 +25,8 @@
 
 extern MavLinkData *mav;
 extern MavConsole *console;
-extern int displayMemory[];
-extern int drawingMemory[];
+//extern int displayMemory[];
+//extern int drawingMemory[];
 
 #define MS_PER_TIMESLICE       10
 
@@ -116,11 +116,20 @@ LedGroups* led_groups;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         
 LedController::LedController() {
-  leds = new OctoWS2811(MAX_LEDS_PER_STRIP, displayMemory, drawingMemory, WS2811_GRB | WS2811_800kHz);
-  leds->begin();
+  //leds = new OctoWS2811(MAX_LEDS_PER_STRIP, displayMemory, drawingMemory, WS2811_GRB | WS2811_800kHz);
+  FastLED.addLeds<CHIPSET, FL_DP,  RGB_ORDER>(leds, 0, MAX_LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+  FastLED.addLeds<CHIPSET, FR_DP,  RGB_ORDER>(leds, MAX_LEDS_PER_STRIP, MAX_LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+  FastLED.addLeds<CHIPSET, MFL_DP, RGB_ORDER>(leds, 2*MAX_LEDS_PER_STRIP, MAX_LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+  FastLED.addLeds<CHIPSET, MFR_DP, RGB_ORDER>(leds, 3*MAX_LEDS_PER_STRIP, MAX_LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+  FastLED.addLeds<CHIPSET, MBL_DP, RGB_ORDER>(leds, 4*MAX_LEDS_PER_STRIP, MAX_LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+  FastLED.addLeds<CHIPSET, MBR_DP, RGB_ORDER>(leds, 5*MAX_LEDS_PER_STRIP, MAX_LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+  FastLED.addLeds<CHIPSET, BL_DP,  RGB_ORDER>(leds, 6*MAX_LEDS_PER_STRIP, MAX_LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+  FastLED.addLeds<CHIPSET, BR_DP,  RGB_ORDER>(leds, 7*MAX_LEDS_PER_STRIP, MAX_LEDS_PER_STRIP).setCorrection( TypicalLEDStrip );
+
+  //leds->begin();
   led_groups = new LedGroups(leds);
   reload();
-  leds->show();
+  FastLED.show();
 }
 
 void LedController::dump_diags() {
@@ -154,7 +163,7 @@ void LedController::reload() {
   }
 
   for (int i=0; i < MAX_LEDS_PER_STRIP*MAX_STRIPS; i++) {
-    leds->setPixel(i, 0x000000);
+    leds[i]= 0;
   }
 
   led_groups->clear_led_assignments();    
@@ -717,7 +726,7 @@ void LedController::process_command() {
 }
 
 void LedController::update_leds() {  
-  leds->show();
+  FastLED.show();
 }
 
 void LedController::process_10_millisecond() {  
@@ -735,7 +744,7 @@ void LedController::process_10_millisecond() {
     process_command();
   }
   led_groups->process_10_milliseconds();
-//  leds->show();
+//  FastLED.how();
 }
 
 
