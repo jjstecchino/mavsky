@@ -22,7 +22,7 @@ local HdopWavFile = {}
 
 local goodHdopThreshold = 2.5
 local fairHdopThreshold = 5
-local poorHdopThreshold = 98.9
+local poorHdopThreshold = 99
 
 local function init()
   ArmedModeWavFile[1]="darmed.wav"       -- armed value 0 - disarmed
