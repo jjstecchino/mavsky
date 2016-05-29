@@ -9,6 +9,7 @@
 // My tarot has 11 LED on each of the 4 arms
 
 define MAX_LEDS_PER_STRIP 11
+define TIP_LEDS 3
 
 // Define group numbers
 
@@ -26,6 +27,12 @@ define FRONT_LEFT       8
 define FRONT_RIGHT      9
 define BACK_LEFT       10
 define BACK_RIGHT      11
+
+define FLASHERS        12
+
+define TIPS            13
+define LEFT_TIPS       14
+define RIGHT_TIPS      15
 
 // Define standard colors
 
@@ -91,23 +98,68 @@ initialize begin
 	append group BACK_LEFT as strip 7 led 1 to MAX_LEDS_PER_STRIP
 	append group BACK_RIGHT as strip 8 led 1 to MAX_LEDS_PER_STRIP
 
+  // groups for flashers lights
+    append group FLASHERS as strip 1 led 9 to MAX_LEDS_PER_STRIP
+    append group FLASHERS as strip 2 led 9 to MAX_LEDS_PER_STRIP
+    append group FLASHERS as strip 3 led 9 to MAX_LEDS_PER_STRIP
+    append group FLASHERS as strip 4 led 9 to MAX_LEDS_PER_STRIP
+    append group FLASHERS as strip 5 led 9 to MAX_LEDS_PER_STRIP
+    append group FLASHERS as strip 6 led 9 to MAX_LEDS_PER_STRIP
+    append group FLASHERS as strip 7 led 9 to MAX_LEDS_PER_STRIP
+    append group FLASHERS as strip 8 led 9 to MAX_LEDS_PER_STRIP
+
+  // groups for leds at the tips
+    append group TIPS as strip 1 led 1 to TIP_LEDS
+    append group TIPS as strip TIP_LEDS led 1 to TIP_LEDS
+    append group TIPS as strip 3 led 1 to TIP_LEDS
+    append group TIPS as strip 4 led 1 to TIP_LEDS
+    append group TIPS as strip 5 led 1 to TIP_LEDS
+    append group TIPS as strip 6 led 1 to TIP_LEDS
+    append group TIPS as strip 7 led 1 to TIP_LEDS
+    append group TIPS as strip 8 led 1 to TIP_LEDS
+
+  // groups for corner tips
+	append group LEFT_TIPS as strip 1 led 1 to TIP_LEDS
+	append group LEFT_TIPS as strip 7 led 1 to TOP_LEDS
+    append group RIGHT_TIPS as strip 2 led 1 to TOP_LEDS
+	append group RIGHT_TIPS as strip 8 led 1 to TOP_LEDS
+
+
 end
+
+////////////////////////////////////////////////////////////////////////////////////
+//
+// Different modes are selected by channel 8 pot
+//
+////////////////////////////////////////////////////////////////////////////////////
+
+// default text pattern displayed even if transmitter is off
 
 if ( rc.ch8 <= 1100 ) then 
 	color group ALL_LEDS WHITE_20									 
 	color group STRIP_NUMBER_ID RED_20							 
 end
+
+// default claudio's navigation pattern
   
-if ( 1100 < rc.ch8 and rc.ch8 <= 1200  ) then 
-	color group ALL_LEDS OFF									 
-	flash group ALL_LEDS YELLOW 30 970   0							 
-	flash group ALL_LEDS YELLOW 20 980 200						 
+if ( 1100 < rc.ch8 and rc.ch8 <= 1200  ) then
+	color group ALL_LEDS WHITE_80
+	color group LEFT_TIPS RED
+	color group RIGHT_TIPS GREEN
+	if (fc.armed = 1) then
+	   color group LEFT RED
+	   color group RIGHT GREEN
+	   flash group FLASHERS WHITE 30 970 0
+	   flash group FLASHERS WHITE 20 980 200
+	end
+    //	flash group ALL_LEDS YELLOW 30 970   0							 
+    //	flash group ALL_LEDS YELLOW 20 980 200						 
 end
   
 if ( 1200 < rc.ch8 and rc.ch8 <= 1300  ) then 
 	color group ALL_LEDS OFF					 
 	bar group FRONT_LEFT RED    25 0 100 1
-        bar group FRONT_RIGHT GREEN 25 0 100 1     
+    bar group FRONT_RIGHT GREEN 25 0 100 1     
 	bar group BACK_LEFT RED     25 0 100 1     
 	bar group BACK_RIGHT GREEN  25 0 100 1   		
 end
@@ -159,7 +211,7 @@ end
 if ( 1900 < rc.ch8 ) then 
 	color group ALL_LEDS WHITE_80					
 	bar group FRONT_LEFT RED    25 0 100  1   
-       bar group FRONT_RIGHT GREEN 25 0 100  1     
+    bar group FRONT_RIGHT GREEN 25 0 100  1     
 	bar group BACK_LEFT RED     25 0 100  1     
 	bar group BACK_RIGHT GREEN  25 0 100  1   	  
 end
