@@ -8,7 +8,7 @@
 
 // My tarot has 11 LED on each of the 4 arms
 define NAV_BEGIN             1
-define NAV_END               4
+define NAV_END               3
 define FLASHERS_BEGIN        5				
 define FLASHERS_END          11
 define STATUS_BEGIN          11             
@@ -20,7 +20,7 @@ define MAX_LEDS_PER_STRIP    11
 // Define group numbers
 
 define ALL_LEDS         1
-define STRIP_NUMBER_ID  2
+define STRIP_NUMBER_ID  3
 
 define FRONT            3
 define BACK             4
@@ -39,7 +39,12 @@ define NAV_RIGHT       13
 define FLASHERS        14
 define STATUS          15
 
-define ALL_LEDS1       16
+define FL_FL           16
+define FL_FR           17
+define FL_BL           18
+define FL_BR           19
+
+define ALL_LEDS1       20
 
 
 // Define standard colors
@@ -124,15 +129,21 @@ initialize begin
     append group NAV_RIGHT as strip 2 led 1 to NAV_END
 	append group NAV_RIGHT as strip 8 led 1 to NAV_END
 
-    // groups for flashers lights
-    append group FLASHERS as strip 1 led 5 to FLASHERS_END
-    append group FLASHERS as strip 2 led 5 to FLASHERS_END
-    append group FLASHERS as strip 3 led 5 to FLASHERS_END
-    append group FLASHERS as strip 4 led 5 to FLASHERS_END
-    append group FLASHERS as strip 5 led 5 to FLASHERS_END
-    append group FLASHERS as strip 6 led 5 to FLASHERS_END
-    append group FLASHERS as strip 7 led 5 to FLASHERS_END
-    append group FLASHERS as strip 8 led 5 to FLASHERS_END
+    // groups for all flashers lights
+    append group FLASHERS as strip 1 led 4 to FLASHERS_END
+    append group FLASHERS as strip 2 led 4 to FLASHERS_END
+    append group FLASHERS as strip 3 led 4 to FLASHERS_END
+    append group FLASHERS as strip 4 led 4 to FLASHERS_END
+    append group FLASHERS as strip 5 led 4 to FLASHERS_END
+    append group FLASHERS as strip 6 led 4 to FLASHERS_END
+    append group FLASHERS as strip 7 led 4 to FLASHERS_END
+    append group FLASHERS as strip 8 led 4 to FLASHERS_END
+    
+    // groups for individual arm flashers lights for waves and bounces
+    append group FL_FL as strip 1 led 4 to FLASHERS_END
+    append group FL_FR as strip 2 led 4 to FLASHERS_END
+    append group FL_BL as strip 7 led 4 to FLASHERS_END
+    append group FL_BR as strip 8 led 4 to FLASHERS_END
 
     // groups for status lights
     append group STATUS as strip 1 led 10 to MAX_LEDS_PER_STRIP
@@ -174,13 +185,13 @@ if ( 1100 < rc.ch8 and rc.ch8 <= 1200  ) then
 	////////////////////////////////////////////////////////////////////////////////////////////////
     if ( fc.armed==0 ) then
     	color group ALL_LEDS OFF
-		if (gps.hdop <= 250) then				           // good
+		if (gps.hdop <= 250) then				           // good, ready to go show airworthy ship
 		    color group NAV_LEFT RED
 		    color group NAV_RIGHT GREEN        
-		    bounce group FRONT_LEFT  WHITE_80    100 1                 
-	        bounce group FRONT_RIGHT WHITE_80    100 1               
-		    bounce group BACK_LEFT   WHITE_80    100 1              
-		    bounce group BACK_RIGHT  WHITE_80    100 1   				        	
+		    bounce group FL_FL  WHITE_80 100 1                 
+	        bounce group FL_FR  WHITE_80 100 1               
+		    bounce group FL_BL  WHITE_80 100 1              
+		    bounce group FL_BR  WHITE_80 100 1   				        	
 		end
 	    if (250 < gps.hdop and gps.hdop <= 500) then        // fair
 			bounce group FRONT_LEFT  ORANGE    100 1                 
@@ -207,9 +218,23 @@ if ( 1100 < rc.ch8 and rc.ch8 <= 1200  ) then
 	   color group NAV_RIGHT GREEN
 	   if ( fc.flightmode == 0 ) then           // Stabilize
 	       color group FLASHERS OFF	
+	       flash group FLASHERS YELLOW 30 970 0
+	       flash group FLASHERS YELLOW 20 980 200				 
+		end
+
+	   if ( fc.flightmode == 2 ) then           // Alt Hold
+	       color group FLASHERS OFF	
 	       flash group FLASHERS WHITE_80 30 970 0
 	       flash group FLASHERS WHITE_80 20 980 200				 
 		end
+
+		if ( fc.flightmode == 6 ) then           // RTL
+			color group FLASHERS OFF						 
+		    bounce group FL_FL  BLUE 100 1                 
+	        bounce group FL_FR  BLUE 100 1               
+		    bounce group FL_BL  BLUE 100 1              
+		    bounce group FL_BR  BLUE 100 1   				        	
+		end  
 
 		if ( fc.flightmode == 16 ) then          // Position Hold
 			color group FLASHERS BLUE					 
@@ -218,25 +243,28 @@ if ( 1100 < rc.ch8 and rc.ch8 <= 1200  ) then
 		end
   
 		if ( fc.flightmode == 9 ) then           // Land
-			color group FLASHERS OFF						 
-		    bounce group FLASHERS WHITE_80  100 1          
+			color group FLASHERS BLUE						 
+		    bounce group FL_FL  WHITE_80 100 1                 
+	        bounce group FL_FR  WHITE_80 100 1               
+		    bounce group FL_BL  WHITE_80 100 1              
+		    bounce group FL_BR  WHITE_80 100 1   				        	
 		end  
 		/////////////////////////////////////////////////////////////
 		// Warnings and Criticals
 		/////////////////////////////////////////////////////////////
-		if ( gps.hdop > 1000 ) then                // Bad HDOP
+		if ( gps.hdop > 500 ) then                // Bad HDOP
 			color group STATUS OFF									 
 			flash group STATUS BLUE 500 500 0							 
 		end     
 		   
-		if ( bat.voltage < 110  ) then         // Battery < 11.0 Volts flash yellow
+		if ( bat.voltage < 110  ) then         // Battery < 11.0 Volts flash yellow/red
 			color group STATUS RED									 
-			flash group STATUS [255 255 0] 500 500 0							 
+			flash group STATUS YELLOW 500 500 0							 
 		end
 
-		if ( bat.voltage < 107  ) then         // Battery < 10.7 Volts flash red
+		if ( bat.voltage < 177  ) then         // Battery < 10.7 Volts flash red
 			color group FLASHERS OFF								 
-			flash group FLASHERS RED 100 100 0							 
+			flash group FLASHERS RED 200 800 0							 
 		end
 
 		//if ( fc.rssi <100 ) then	              // RSSI log going too far

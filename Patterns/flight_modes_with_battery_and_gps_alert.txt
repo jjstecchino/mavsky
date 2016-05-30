@@ -28,7 +28,7 @@
 // fc.flightmode
 //   0  Stabilize
 //   1  Acro
-//   3  Altitude Hold
+//   2  Altitude Hold
 //   3  Auto
 //   4  Guided
 //   5  Loiter
@@ -114,6 +114,6 @@ end
 
 if ( bat.voltage < 107  ) then         // Battery < 10.7 Volts flash red
 	color group 2 [0 0 0]								 
-	flash group 2 [255 0 0] 100 100 0							 
+	flash group 2 [255 0 0] 200 500 0							 
 end
   
