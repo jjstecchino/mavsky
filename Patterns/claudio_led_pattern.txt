@@ -7,9 +7,15 @@
 /////////////////////////////////////////////////////////////
 
 // My tarot has 11 LED on each of the 4 arms
+define NAV_BEGIN             1
+define NAV_END               4
+define FLASHERS_BEGIN        5				
+define FLASHERS_END          11
+define STATUS_BEGIN          11             
+define STATUS_END            11
+define MAX_LEDS_PER_STRIP    11
 
-define MAX_LEDS_PER_STRIP 11
-define TIP_LEDS 3
+
 
 // Define group numbers
 
@@ -28,11 +34,13 @@ define FRONT_RIGHT      9
 define BACK_LEFT       10
 define BACK_RIGHT      11
 
-define FLASHERS        12
+define NAV_LEFT        12
+define NAV_RIGHT       13
+define FLASHERS        14
+define STATUS          15
 
-define TIPS            13
-define LEFT_TIPS       14
-define RIGHT_TIPS      15
+define ALL_LEDS1       16
+
 
 // Define standard colors
 
@@ -42,6 +50,7 @@ define BLUE           [0 0 255]
 define YELLOW         [255 255 0]
 define CYAN           [0 255 255]
 define MAGENTA        [255 0 255]
+define ORANGE         [255 128 0]
 
 define OFF            [0 0 0]	         
        
@@ -62,7 +71,17 @@ initialize begin
 	append group ALL_LEDS as strip 7 led 1 to MAX_LEDS_PER_STRIP
 	append group ALL_LEDS as strip 8 led 1 to MAX_LEDS_PER_STRIP
 
-	// group for strip number identification
+	// group ALL_LEDS is used for all leds - usually this group is used for background
+	append group ALL_LEDS1 as strip 1 led 1 to MAX_LEDS_PER_STRIP
+	append group ALL_LEDS1 as strip 2 led 1 to MAX_LEDS_PER_STRIP
+	append group ALL_LEDS1 as strip 3 led 1 to MAX_LEDS_PER_STRIP
+	append group ALL_LEDS1 as strip 4 led 1 to MAX_LEDS_PER_STRIP
+	append group ALL_LEDS1 as strip 5 led 1 to MAX_LEDS_PER_STRIP
+	append group ALL_LEDS1 as strip 6 led 1 to MAX_LEDS_PER_STRIP
+	append group ALL_LEDS1 as strip 7 led 1 to MAX_LEDS_PER_STRIP
+	append group ALL_LEDS1 as strip 8 led 1 to MAX_LEDS_PER_STRIP
+
+    // group for strip number identification
 	append group STRIP_NUMBER_ID as strip 1 led 1 to 1
 	append group STRIP_NUMBER_ID as strip 2 led 1 to 2
 	append group STRIP_NUMBER_ID as strip 3 led 1 to 3
@@ -71,6 +90,7 @@ initialize begin
 	append group STRIP_NUMBER_ID as strip 6 led 1 to 6
 	append group STRIP_NUMBER_ID as strip 7 led 1 to 7
 	append group STRIP_NUMBER_ID as strip 8 led 1 to 8
+
 
 	// groups for front, back and middle
 	append group FRONT as strip 1 led 1 to MAX_LEDS_PER_STRIP
@@ -82,7 +102,7 @@ initialize begin
 	append group MIDDLE_FOUR as strip 5 led 1 to MAX_LEDS_PER_STRIP
 	append group MIDDLE_FOUR as strip 6 led 1 to MAX_LEDS_PER_STRIP  
   
-  // groups for left and right
+    // groups for left and right
 	append group LEFT as strip 1 led 1 to MAX_LEDS_PER_STRIP        
 	append group LEFT as strip 3 led 1 to MAX_LEDS_PER_STRIP        
 	append group LEFT as strip 5 led 1 to MAX_LEDS_PER_STRIP         
@@ -92,72 +112,144 @@ initialize begin
 	append group RIGHT as strip 6 led 1 to MAX_LEDS_PER_STRIP        
 	append group RIGHT as strip 8 led 1 to MAX_LEDS_PER_STRIP        
 	   
-  // groups for corner arms
-	append group FRONT_LEFT as strip 1 led 1 to MAX_LEDS_PER_STRIP
+    // groups for corner arms
+	append group FRONT_LEFT  as strip 1 led 1 to MAX_LEDS_PER_STRIP
 	append group FRONT_RIGHT as strip 2 led 1 to MAX_LEDS_PER_STRIP
-	append group BACK_LEFT as strip 7 led 1 to MAX_LEDS_PER_STRIP
-	append group BACK_RIGHT as strip 8 led 1 to MAX_LEDS_PER_STRIP
+	append group BACK_LEFT   as strip 7 led 1 to MAX_LEDS_PER_STRIP
+	append group BACK_RIGHT  as strip 8 led 1 to MAX_LEDS_PER_STRIP
 
-  // groups for flashers lights
-    append group FLASHERS as strip 1 led 9 to MAX_LEDS_PER_STRIP
-    append group FLASHERS as strip 2 led 9 to MAX_LEDS_PER_STRIP
-    append group FLASHERS as strip 3 led 9 to MAX_LEDS_PER_STRIP
-    append group FLASHERS as strip 4 led 9 to MAX_LEDS_PER_STRIP
-    append group FLASHERS as strip 5 led 9 to MAX_LEDS_PER_STRIP
-    append group FLASHERS as strip 6 led 9 to MAX_LEDS_PER_STRIP
-    append group FLASHERS as strip 7 led 9 to MAX_LEDS_PER_STRIP
-    append group FLASHERS as strip 8 led 9 to MAX_LEDS_PER_STRIP
+    // groups for navigation lights
+  	append group NAV_LEFT  as strip 1 led 1 to NAV_END
+	append group NAV_LEFT  as strip 7 led 1 to NAV_END
+    append group NAV_RIGHT as strip 2 led 1 to NAV_END
+	append group NAV_RIGHT as strip 8 led 1 to NAV_END
 
-  // groups for leds at the tips
-    append group TIPS as strip 1 led 1 to TIP_LEDS
-    append group TIPS as strip TIP_LEDS led 1 to TIP_LEDS
-    append group TIPS as strip 3 led 1 to TIP_LEDS
-    append group TIPS as strip 4 led 1 to TIP_LEDS
-    append group TIPS as strip 5 led 1 to TIP_LEDS
-    append group TIPS as strip 6 led 1 to TIP_LEDS
-    append group TIPS as strip 7 led 1 to TIP_LEDS
-    append group TIPS as strip 8 led 1 to TIP_LEDS
+    // groups for flashers lights
+    append group FLASHERS as strip 1 led 5 to FLASHERS_END
+    append group FLASHERS as strip 2 led 5 to FLASHERS_END
+    append group FLASHERS as strip 3 led 5 to FLASHERS_END
+    append group FLASHERS as strip 4 led 5 to FLASHERS_END
+    append group FLASHERS as strip 5 led 5 to FLASHERS_END
+    append group FLASHERS as strip 6 led 5 to FLASHERS_END
+    append group FLASHERS as strip 7 led 5 to FLASHERS_END
+    append group FLASHERS as strip 8 led 5 to FLASHERS_END
 
-  // groups for corner tips
-	append group LEFT_TIPS as strip 1 led 1 to TIP_LEDS
-	append group LEFT_TIPS as strip 7 led 1 to TOP_LEDS
-    append group RIGHT_TIPS as strip 2 led 1 to TOP_LEDS
-	append group RIGHT_TIPS as strip 8 led 1 to TOP_LEDS
-
+    // groups for status lights
+    append group STATUS as strip 1 led 10 to MAX_LEDS_PER_STRIP
+    append group STATUS as strip 2 led 10 to MAX_LEDS_PER_STRIP
+    append group STATUS as strip 3 led 10 to MAX_LEDS_PER_STRIP
+    append group STATUS as strip 4 led 10 to MAX_LEDS_PER_STRIP
+    append group STATUS as strip 5 led 10 to MAX_LEDS_PER_STRIP
+    append group STATUS as strip 6 led 10 to MAX_LEDS_PER_STRIP
+    append group STATUS as strip 7 led 10 to MAX_LEDS_PER_STRIP
+    append group STATUS as strip 8 led 10 to MAX_LEDS_PER_STRIP
 
 end
 
-////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Different modes are selected by channel 8 pot
+// Pot on channel 8 can turn off LEDS or run automatic patterns based on flight modes. 
+// Every mode has red/green navigation leds toward the outer part of the strip
+// then there is a "flasher" region that displys a typical pattern/color that is mode specific
+// If there is a warning condition it will be displayed by the inner 2 "status" LEDS
+// If there is a critical condition it will be displayed prominently by the flashers
 //
-////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// default text pattern displayed even if transmitter is off
+// Transmitter Off or pot low, show test pattern
 
 if ( rc.ch8 <= 1100 ) then 
 	color group ALL_LEDS WHITE_20									 
 	color group STRIP_NUMBER_ID RED_20							 
 end
 
-// default claudio's navigation pattern
-  
+// default navigation mode 
+
 if ( 1100 < rc.ch8 and rc.ch8 <= 1200  ) then
-	color group ALL_LEDS WHITE_80
-	color group LEFT_TIPS RED
-	color group RIGHT_TIPS GREEN
-	if (fc.armed = 1) then
-	   color group LEFT RED
-	   color group RIGHT GREEN
-	   flash group FLASHERS WHITE 30 970 0
-	   flash group FLASHERS WHITE 20 980 200
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+	// We are disarmed, controller is aquiring GPS and doing checks
+	// will show gps status: red -> bad; orange -> fair; nav lights on-> good to go
+	//
+	////////////////////////////////////////////////////////////////////////////////////////////////
+    if ( fc.armed==0 ) then
+    	color group ALL_LEDS OFF
+		if (gps.hdop <= 250) then				           // good
+		    color group NAV_LEFT RED
+		    color group NAV_RIGHT GREEN        
+		    bounce group FRONT_LEFT  WHITE_80    100 1                 
+	        bounce group FRONT_RIGHT WHITE_80    100 1               
+		    bounce group BACK_LEFT   WHITE_80    100 1              
+		    bounce group BACK_RIGHT  WHITE_80    100 1   				        	
+		end
+	    if (250 < gps.hdop and gps.hdop <= 500) then        // fair
+			bounce group FRONT_LEFT  ORANGE    100 1                 
+		    bounce group FRONT_RIGHT ORANGE 100 1               
+		    bounce group BACK_LEFT   ORANGE     100 1              
+		    bounce group BACK_RIGHT  ORANGE  100 1   				        	  
+		end
+    	if ( 500 < gps.hdop ) then						   	//poor
+			bounce group FRONT_LEFT  RED    100 1                 
+		    bounce group FRONT_RIGHT RED 100 1               
+		    bounce group BACK_LEFT   RED     100 1              
+		    bounce group BACK_RIGHT  RED  100 1   	
+		end			        
 	end
-    //	flash group ALL_LEDS YELLOW 30 970   0							 
-    //	flash group ALL_LEDS YELLOW 20 980 200						 
-end
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+	// We are armed. Will display patterns based on flight modes
+	// will also display warnings and critical conditions
+	//
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	if (fc.armed == 1) then
+	   color group NAV_LEFT RED
+	   color group NAV_RIGHT GREEN
+	   if ( fc.flightmode == 0 ) then           // Stabilize
+	       color group FLASHERS OFF	
+	       flash group FLASHERS WHITE_80 30 970 0
+	       flash group FLASHERS WHITE_80 20 980 200				 
+		end
+
+		if ( fc.flightmode == 16 ) then          // Position Hold
+			color group FLASHERS BLUE					 
+	        flash group FLASHERS WHITE_80 30 970 0
+	        flash group FLASHERS WHITE_80 20 980 200				 
+		end
+  
+		if ( fc.flightmode == 9 ) then           // Land
+			color group FLASHERS OFF						 
+		    bounce group FLASHERS WHITE_80  100 1          
+		end  
+		/////////////////////////////////////////////////////////////
+		// Warnings and Criticals
+		/////////////////////////////////////////////////////////////
+		if ( gps.hdop > 1000 ) then                // Bad HDOP
+			color group STATUS OFF									 
+			flash group STATUS BLUE 500 500 0							 
+		end     
+		   
+		if ( bat.voltage < 110  ) then         // Battery < 11.0 Volts flash yellow
+			color group STATUS RED									 
+			flash group STATUS [255 255 0] 500 500 0							 
+		end
+
+		if ( bat.voltage < 107  ) then         // Battery < 10.7 Volts flash red
+			color group FLASHERS OFF								 
+			flash group FLASHERS RED 100 100 0							 
+		end
+
+		//if ( fc.rssi <100 ) then	              // RSSI log going too far
+		//    color group NAV_LEFT OFF
+		//    color group NAV_RIGHT OFF
+		//    flash group NAV_LEFT RED 500 500 0
+		//    flash group NAV RIGHT GREEN 500 500 500
+		//end
+	end
+ end
   
 if ( 1200 < rc.ch8 and rc.ch8 <= 1300  ) then 
-	color group ALL_LEDS OFF					 
+	color group ALL_LEDS1 OFF					 
 	bar group FRONT_LEFT RED    25 0 100 1
     bar group FRONT_RIGHT GREEN 25 0 100 1     
 	bar group BACK_LEFT RED     25 0 100 1     
@@ -165,7 +257,7 @@ if ( 1200 < rc.ch8 and rc.ch8 <= 1300  ) then
 end
   
 if ( 1300 < rc.ch8 and rc.ch8 <= 1400 ) then       // scotts nav pattern
-	color group ALL_LEDS OFF						 
+	color group ALL_LEDS1 OFF						 
 	fill group FRONT_LEFT RED    150 1000 1
 	fill group FRONT_RIGHT GREEN 150 1000 1
 	fill group BACK_LEFT RED     150 1000 0
@@ -173,7 +265,7 @@ if ( 1300 < rc.ch8 and rc.ch8 <= 1400 ) then       // scotts nav pattern
 end
   
 if ( 1400 < rc.ch8 and rc.ch8 <= 1500 ) then
-	color group ALL_LEDS OFF						 
+	color group ALL_LEDS1 OFF						 
 	wave group FRONT_LEFT RED    50 2	1
 	wave group FRONT_RIGHT GREEN 50 2 1
 	wave group BACK_LEFT RED     50 2 0
@@ -189,7 +281,7 @@ if ( 1500 < rc.ch8 and rc.ch8 <= 1600 ) then
 end
   
 if ( 1600 < rc.ch8 and rc.ch8 <= 1700 ) then
-	color group  ALL_LEDS OFF						 
+	color group  ALL_LEDS1 OFF						 
 	flash group LEFT RED    20 950   0     
 	flash group LEFT RED    20 950 100       
 	flash group RIGHT GREEN 20 950 200        
@@ -205,11 +297,11 @@ if ( 1700 < rc.ch8 and rc.ch8 <= 1800 ) then
 end
   
 if ( 1800 < rc.ch8 and rc.ch8 <= 1900 ) then 
-	color group 1 OFF			            // off	
+	color group ALL_LEDS1 OFF			            // off	
 end  
   
 if ( 1900 < rc.ch8 ) then 
-	color group ALL_LEDS WHITE_80					
+	color group ALL_LEDS1 WHITE_80					
 	bar group FRONT_LEFT RED    25 0 100  1   
     bar group FRONT_RIGHT GREEN 25 0 100  1     
 	bar group BACK_LEFT RED     25 0 100  1     

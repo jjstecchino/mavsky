@@ -23,8 +23,6 @@
 
 extern MavLinkData *mav;
 extern MavConsole *console;
-//extern int displayMemory[];
-//extern int drawingMemory[];
 
 LedGroupActions::LedGroupActions(CRGB led_ptr[], LedGroup* led_group_ptr_param) {
   led_group_ptr = led_group_ptr_param;

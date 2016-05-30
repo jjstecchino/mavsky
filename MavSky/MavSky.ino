@@ -58,9 +58,6 @@ MavConsole *console;
 MavLinkData *mav;
 FrSkySPort *frsky;
 DataBroker *data_broker;
-
-//DMAMEM int displayMemory[MAX_LEDS_PER_STRIP*6];
-//int drawingMemory[MAX_LEDS_PER_STRIP*6];
   
 LedController* led_strip_ptr;
 
